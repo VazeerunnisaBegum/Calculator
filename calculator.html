@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #121212;
+            color: white;
+        }
+        .calculator {
+            width: 320px;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .display-container {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+        .display {
+            width: 100%;
+            height: 60px;
+            font-size: 1.8em;
+            text-align: right;
+            padding: 10px;
+            border: none;
+            background: #333;
+            color: white;
+            border-radius: 10px;
+            outline: none;
+        }
+        .result {
+            text-align: right;
+            font-size: 1.5em;
+            color: #4caf50;
+            min-height: 30px;
+            padding: 5px;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        button {
+            padding: 15px;
+            font-size: 1.5em;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: 0.2s ease;
+            background: #333;
+            color: white;
+        }
+        .operator {
+            background: #ff9800;
+        }
+        .equal {
+            background: #4caf50;
+            grid-column: span 2;
+        }
+        .clear {
+            background: #f44336;
+        }
+        .backspace {
+            background: #607d8b;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display-container">
+            <input type="text" id="display" class="display" oninput="updateResult()" disabled>
+            <div id="result" class="result"></div>
+        </div>
+        <div class="buttons">
+            <button onclick="clearDisplay()" class="clear">C</button>
+            <button onclick="backspace()" class="backspace">⌫</button>
+            <button onclick="appendValue('%')" class="operator">%</button>
+            <button onclick="appendValue('/')" class="operator">÷</button>
+
+            <button onclick="appendValue('7')">7</button>
+            <button onclick="appendValue('8')">8</button>
+            <button onclick="appendValue('9')">9</button>
+            <button onclick="appendValue('*')" class="operator">×</button>
+
+            <button onclick="appendValue('4')">4</button>
+            <button onclick="appendValue('5')">5</button>
+            <button onclick="appendValue('6')">6</button>
+            <button onclick="appendValue('-')" class="operator">−</button>
+
+            <button onclick="appendValue('1')">1</button>
+            <button onclick="appendValue('2')">2</button>
+            <button onclick="appendValue('3')">3</button>
+            <button onclick="appendValue('+')" class="operator">+</button>
+
+            <button onclick="appendValue('0')">0</button>
+            <button onclick="appendValue('.')">.</button>
+            <button onclick="calculateResult()" class="equal">=</button>
+        </div>
+    </div>
+
+    <script>
+        function appendValue(value) {
+            document.getElementById("display").value += value;
+            updateResult();
+        }
+
+        function clearDisplay() {
+            document.getElementById("display").value = "";
+            document.getElementById("result").innerText = "";
+        }
+
+        function backspace() {
+            let display = document.getElementById("display");
+            display.value = display.value.slice(0, -1);
+            updateResult();
+        }
+
+        function updateResult() {
+            let expression = document.getElementById("display").value;
+            if (expression) {
+                try {
+                    let result = eval(expression.replace(/%/g, '/100'));
+                    document.getElementById("result").innerText = "= " + result;
+                } catch {
+                    document.getElementById("result").innerText = "";
+                }
+            } else {
+                document.getElementById("result").innerText = "";
+            }
+        }
+
+        function calculateResult() {
+            try {
+                let expression = document.getElementById("display").value.replace(/%/g, '/100');
+                document.getElementById("display").value = eval(expression);
+                document.getElementById("result").innerText = "";
+            } catch {
+                document.getElementById("display").value = "Error";
+                document.getElementById("result").innerText = "";
+            }
+        }
+
+        document.addEventListener("keydown", function(event) {
+            let key = event.key;
+            if (/[0-9+\-*/.%]/.test(key)) {
+                appendValue(key);
+            } else if (key === "Enter") {
+                calculateResult();
+            } else if (key === "Backspace") {
+                backspace();
+            } else if (key === "Escape") {
+                clearDisplay();
+            }
+        });
+    </script>
+</body>
+</html>
